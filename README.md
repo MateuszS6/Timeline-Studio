@@ -1,4 +1,4 @@
-# Marvel Timelines App
+# Timeline Studio: A Marvel Timelines App
 
 _A personalised viewer and editor of movie timelines and characters._
 
