@@ -1,21 +1,31 @@
-import { useEffect } from 'react'
-import { supabase } from './config/supabase'
+import { useEffect, useState } from 'react'
+import type { Project } from './types/project';
+import { getProjects } from './services/projects'
 import './App.css'
 
 function App() {
+  const [projects, setProjects] = useState<Project[]>([]);
+
   useEffect(() => {
-    async function testConnection() {
-      const { data, error } = await supabase.from("projects").select("*");
-      console.log(data);
-      console.log(error);
+    async function loadProjects() {
+      const data = await getProjects();
+      setProjects(data);
     }
 
-    testConnection();
+    loadProjects();
   }, [])
 
   return (
-    <h1>Marvel Timelines</h1>
-    
+    <div>
+      <h1>Marvel Timelines</h1>
+
+      {projects.map(project => (
+        <p key={project.id}>
+          {project.title} | {project.release_date.getFullYear()}
+        </p>
+      ))}
+    </div>
+
   )
 }
 
