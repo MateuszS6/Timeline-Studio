@@ -3,6 +3,7 @@
   --bg: #111;
   --border: #333;
   --accent-bg: #1b1b1b;
+  --highlight-bg: #252525;
 }
 
 * {
@@ -32,4 +33,18 @@ body {
   flex: 1;
   overflow: auto;
   padding: 20px;
+}
+
+.project-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.project-column {
+  min-width: 100px;
+  text-align: center;
+  background: var(--highlight-bg);
+  border-radius: 8px;
+  padding: 12px;
 }
