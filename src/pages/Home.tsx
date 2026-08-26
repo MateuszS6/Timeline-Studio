@@ -1,28 +1,12 @@
-import { useEffect, useState } from 'react'
-import type { Project } from '../types/project';
-import { getProjects } from '../services/projects'
+import Sidebar from '../components/Sidebar';
+import TimelineGrid from '../components/TimelineGrid';
 
 function Home() {
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  useEffect(() => {
-    async function loadProjects() {
-      const data = await getProjects();
-      setProjects(data);
-    }
-
-    loadProjects();
-  }, [])
-
   return (
-    <div>
-      <h1>Marvel Timelines</h1>
+    <div className='app'>
+      <Sidebar />
 
-      {projects.map(project => (
-        <p key={project.id}>
-          {project.title} | {project.release_date.getFullYear()}
-        </p>
-      ))}
+      <TimelineGrid />
     </div>
 
   )
