@@ -1,5 +1,5 @@
-import Sidebar from '../components/Sidebar';
-import TimelineGrid from '../components/TimelineGrid';
+import Sidebar from '../components/layout/Sidebar';
+import TimelineGrid from '../components/timeline/TimelineGrid';
 
 function Home() {
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import type { Project } from "../types/project"
-import { getProjects } from "../services/projects";
+import type { Project } from "../../types/project"
+import { getProjects } from "../../services/projects";
 
 export default function TimelineGrid() {
     const [projects, setProjects] = useState<Project[]>([]);
