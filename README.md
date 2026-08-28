@@ -4,7 +4,7 @@ _A personalised viewer and editor of movie timelines and characters._
 
 ## Development Progress
 
-> [!NOTE] Version 0.1.0
+> Version 0.1.0:
 > ![App](docs/images/timeline-studio-v0.1.0.png)
 
 See all progress screenshots [here](docs/images).
