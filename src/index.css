@@ -17,7 +17,7 @@ body {
   color: var(--text);
 }
 
-.app {
+.app-layout {
   display: flex;
   height: 100vh;
 }
