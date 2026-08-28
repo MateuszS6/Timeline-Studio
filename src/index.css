@@ -1,50 +1,289 @@
 :root {
-  --text: white;
-  --bg: #111;
-  --border: #333;
-  --accent-bg: #1b1b1b;
-  --highlight-bg: #252525;
+  --text: #f4f4f5;
+  --sub-text: #858892;
+
+  --bg: #0f1012;
+  --border: #292b30;
+
+  --accent-bg: #151619;
+  --accent-border: #25262b;
+
+  --highlight-bg: #18191d;
+
+  --button-text: #a9abb2;
+  --button-text-hover: white;
+  --button-bg-hover: #202126;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
   background: var(--bg);
   color: var(--text);
 }
 
+/* APP */
+
 .app-layout {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
+
+/* SIDEBAR */
 
 .sidebar {
-  width: 260px;
-  background: var(--accent-bg);
+  width: 220px;
+  flex-shrink: 0;
+
+  padding: 24px 16px;
+
   border-right: 1px solid var(--border);
-  padding: 20px;
+
+  background: var(--accent-bg);
 }
 
-.timeline {
-  flex: 1;
-  overflow: auto;
-  padding: 20px;
-}
-
-.project-header {
+.sidebar-brand {
   display: flex;
-  gap: 12px;
-  margin-bottom: 30px;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 32px;
+
+  font-weight: 700;
+}
+
+.sidebar-logo {
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 8px;
+
+  background: red;
+  color: white;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-item {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border: 0;
+  border-radius: 8px;
+
+  text-align: left;
+
+  background: transparent;
+  color: var(--button-text);
+
+  cursor: pointer;
+}
+
+.sidebar-item:hover {
+  background: var(--button-bg-hover);
+  color: var(--button-text-hover);
+}
+
+.sidebar-item.active {
+  background: var(--border);
+  color: var(--button-text-hover);
+}
+
+/* CONTENT */
+
+.main-content {
+  min-width: 0;
+  flex: 1;
+
+  padding: 28px;
+
+  overflow: hidden;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0 0 6px;
+
+  font-size: 26px;
+}
+
+.page-header p {
+  margin: 0;
+
+  color: var(--sub-text);
+}
+
+/* TIMELINE */
+
+.timeline-container {
+  height: calc(100vh - 120px);
+
+  overflow: auto;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--accent-bg);
+}
+
+.timeline-grid {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* ROW */
+
+.timeline-row {
+  display: flex;
+
+  min-height: 58px;
+
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.timeline-row:last-child {
+  border-bottom: 0;
+}
+
+/* CHARACTER */
+
+.character-column {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+
+  width: 190px;
+  min-width: 190px;
+
+  padding: 0 16px;
+
+  border-right: 1px solid var(--border);
+
+  background: var(--accent-bg);
+
+  font-weight: 500;
+}
+
+.timeline-corner {
+  z-index: 4;
+
+  color: var(--sub-text);
+
+  font-size: 13px;
+}
+
+/* PROJECT HEADER */
+
+.timeline-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+
+  min-height: 110px;
+
+  background: var(--highlight-bg);
 }
 
 .project-column {
-  min-width: 100px;
-  text-align: center;
-  background: var(--highlight-bg);
-  border-radius: 8px;
-  padding: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  width: 76px;
+  min-width: 76px;
+
+  padding: 10px 6px;
+
+  border-right: 1px solid var(--accent-border);
+
+  color: var(--button-text);
+}
+
+.project-column span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+
+  max-height: 90px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CELLS */
+
+.timeline-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: 76px;
+  min-width: 76px;
+
+  border-right: 1px solid var(--button-bg-hover);
+}
+
+/* horizontal character timeline */
+
+.timeline-cell::before {
+  content: '';
+
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  height: 1px;
+  background: #2b2d33; /* TODO: var */
+}
+
+/* appearance */
+
+.appearance-dot {
+  position: relative;
+  z-index: 1;
+
+  width: 12px;
+  height: 12px;
+
+  border: 3px solid var(--accent-bg);
+  border-radius: 50%;
+
+  background: var(--text);
+
+  box-shadow: 0 0 0 1px #737680; /* TODO: var */
+}
+
+.appearance-dot:hover {
+  transform: scale(1.25);
 }
