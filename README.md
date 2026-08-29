@@ -2,14 +2,14 @@
 
 _A personalised viewer and editor of movie timelines and characters._
 
-## Development Progress
+## Progress
 
 > Version 0.1.0:
 > ![App](docs/images/timeline-studio-v0.1.0.png)
 
 See all progress screenshots [here](docs/images).
 
-## Tech Stack
+## Stack
 
 ![Vite](https://img.shields.io/badge/Vite-9135FF?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=1f212d)
