@@ -1,4 +1,3 @@
-import './App.css';
 import TimelinePage from './pages/TimelinePage';
 
 function App() {

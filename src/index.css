@@ -13,6 +13,9 @@
   --button-text: #a9abb2;
   --button-text-hover: white;
   --button-bg-hover: #202126;
+
+  --timeline-line: #2b2d33;
+  --timeline-dot-border: #737680;
 }
 
 * {
@@ -264,7 +267,7 @@ body {
   right: 0;
 
   height: 1px;
-  background: #2b2d33; /* TODO: var */
+  background: var(--timeline-line);
 }
 
 /* appearance */
@@ -281,7 +284,7 @@ body {
 
   background: var(--text);
 
-  box-shadow: 0 0 0 1px #737680; /* TODO: var */
+  box-shadow: 0 0 0 1px var(--timeline-dot-border);
 }
 
 .appearance-dot:hover {
