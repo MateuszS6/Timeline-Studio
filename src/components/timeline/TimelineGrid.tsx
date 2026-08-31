@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
-import { getProjects } from "../../services/projects";
+import { useEffect, useState } from "react";
+import { createAppearance, deleteAppearance, getAppearances, updateAppearance } from "../../services/appearances";
 import { getCharacters } from "../../services/characters";
-import { getAppearances } from "../../services/appearances";
-import type { Project } from "../../types/project"
-import type { Character } from "../../types/character";
+import { getProjects } from "../../services/projects";
 import type { Appearance } from "../../types/appearance";
-import TimelineHeader from "./TimelineHeader"
+import type { Character } from "../../types/character";
+import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
+import TimelineHeader from "./TimelineHeader";
 
 export default function TimelineGrid() {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -15,6 +15,72 @@ export default function TimelineGrid() {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    async function handleCreateAppearance(
+        characterId: number,
+        projectId: number
+    ) {
+        try {
+            const newAppearance = await createAppearance(
+                characterId,
+                projectId
+            );
+
+            setAppearances((current) => [
+                ...current,
+                newAppearance
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function handleUpdateAppearance(
+        characterId: number,
+        projectId: number,
+        appearanceType: string
+    ) {
+        try {
+            const updatedAppearance =
+                await updateAppearance(
+                    characterId,
+                    projectId,
+                    appearanceType
+                )
+
+            setAppearances((current) =>
+                current.map((appearance) =>
+                    appearance.character_id === characterId &&
+                        appearance.project_id === projectId
+                        ? updatedAppearance
+                        : appearance
+                )
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function handleDeleteAppearance(
+        characterId: number,
+        projectId: number
+    ) {
+        try {
+            await deleteAppearance(characterId, projectId);
+
+            setAppearances((current) =>
+                current.filter((appearance) =>
+                    !(
+                        appearance.character_id === characterId &&
+                        appearance.project_id === projectId
+                    )
+                )
+            );
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
 
     useEffect(() => {
         async function loadTimeline() {
