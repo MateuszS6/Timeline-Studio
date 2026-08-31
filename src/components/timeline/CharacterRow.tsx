@@ -50,7 +50,12 @@ export default function CharacterRow({
                 return (
                     <TimelineCell
                         key={project.id}
+                        characterId={character.id}
+                        projectId={project.id}
                         appearance={appearance}
+                        onCreate={onCreateAppearance}
+                        onUpdate={onUpdateAppearance}
+                        onDelete={onDeleteAppearance}
                     />
                 );
             })}
