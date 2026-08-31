@@ -311,3 +311,50 @@ body {
 .appearance-dot:hover {
   transform: scale(1.25);
 }
+
+/* editor */
+
+.appearance-editor {
+  position: absolute;
+
+  left: calc(50% + 14px);
+  top: 50%;
+
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 130px;
+
+  padding: 6px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: #1c1d21;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  transform: translateY(-50%);
+}
+
+.appearance-editor button {
+  padding: 8px 10px;
+
+  border: 0;
+  border-radius: 5px;
+
+  text-align: left;
+
+  background: transparent;
+
+  color: var(--button-text);
+
+  cursor: pointer;
+}
+
+.appearance-editor button:hover {
+  background: var(--button-bg-hover);
+  color: var(--text);
+}
