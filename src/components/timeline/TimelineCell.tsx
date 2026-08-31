@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Appearance } from "../../types/appearance";
 
 interface TimelineCellProps {
@@ -32,6 +32,34 @@ export default function TimelineCell({
     onDelete
 }: TimelineCellProps) {
     const [editorOpen, setEditorOpen] = useState(false);
+    const cellRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!editorOpen) return;
+
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                cellRef.current &&
+                !cellRef.current.contains(event.target as Node)
+            ) {
+                setEditorOpen(false);
+            }
+        }
+
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape") {
+                setEditorOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [editorOpen])
 
     function handleLeftClick() {
         if (!appearance) {
@@ -65,6 +93,7 @@ export default function TimelineCell({
 
     return (
         <div
+            ref={cellRef}
             className="timeline-cell"
             onClick={handleLeftClick}
             onContextMenu={handleRightClick}

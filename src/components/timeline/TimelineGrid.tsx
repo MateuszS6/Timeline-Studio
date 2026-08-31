@@ -16,6 +16,36 @@ export default function TimelineGrid() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        async function loadTimeline() {
+            try {
+                setLoading(true);
+                
+                const [
+                    projectsData,
+                    charactersData,
+                    appearancesData
+                ] = await Promise.all([
+                    getProjects(),
+                    getCharacters(),
+                    getAppearances()
+                ]);
+                
+                setProjects(projectsData);
+                setCharacters(charactersData);
+                setAppearances(appearancesData);
+            } catch (error) {
+                console.error(error);
+                
+                setError("Could not load timeline.")
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        loadTimeline();
+    }, []);
+
     async function handleCreateAppearance(
         characterId: number,
         projectId: number
@@ -80,38 +110,7 @@ export default function TimelineGrid() {
             console.error(error)
         }
     }
-
-
-    useEffect(() => {
-        async function loadTimeline() {
-            try {
-                setLoading(true);
-
-                const [
-                    projectsData,
-                    charactersData,
-                    appearancesData
-                ] = await Promise.all([
-                    getProjects(),
-                    getCharacters(),
-                    getAppearances()
-                ]);
-
-                setProjects(projectsData);
-                setCharacters(charactersData);
-                setAppearances(appearancesData);
-            } catch (error) {
-                console.error(error);
-
-                setError("Could not load timeline.")
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadTimeline();
-    }, []);
-
+    
     if (loading) return <p>Loading timeline...</p>
 
     if (error) return <p>{error}</p>;
