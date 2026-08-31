@@ -127,6 +127,9 @@ export default function TimelineGrid() {
                         character={character}
                         projects={projects}
                         appearances={appearances}
+                        onCreateAppearance={handleCreateAppearance}
+                        onUpdateAppearance={handleUpdateAppearance}
+                        onDeleteAppearance={handleDeleteAppearance}
                     />
                 ))}
             </div>

@@ -8,12 +8,31 @@ interface CharacterRowProps {
     character: Character;
     projects: Project[];
     appearances: Appearance[];
+
+    onCreateAppearance: (
+        characterId: number,
+        projectId: number
+    ) => void;
+
+    onUpdateAppearance: (
+        characterId: number,
+        projectId: number,
+        appearanceType: string
+    ) => void;
+
+    onDeleteAppearance: (
+        characterId: number,
+        projectId: number
+    ) => void;
 }
 
 export default function CharacterRow({
     character,
     projects,
-    appearances
+    appearances,
+    onCreateAppearance,
+    onUpdateAppearance,
+    onDeleteAppearance
 }: CharacterRowProps) {
     return (
         <div className="timeline-row">
