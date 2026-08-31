@@ -255,6 +255,27 @@ body {
   min-width: 76px;
 
   border-right: 1px solid var(--button-bg-hover);
+
+  cursor: pointer;
+}
+
+.timeline-cell:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.timeline-cell:not(:has(.appearance-dot)):hover::after {
+  content: "";
+
+  position: absolute;
+  z-index: 2;
+
+  width: 7px;
+  height: 7px;
+
+  border: 1px solid var(--timeline-dot-border);
+  border-radius: 50%;
+
+  opacity: 0.5;
 }
 
 /* horizontal character timeline */
