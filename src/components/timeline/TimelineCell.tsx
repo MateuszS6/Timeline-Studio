@@ -178,6 +178,21 @@ export default function TimelineCell({
                     >
                         Footage
                     </button>
+
+                    <div className="appearance-editor-divider" />
+
+                    <button
+                        className={
+                            appearance.is_detached
+                                ? "appearance-editor-option active"
+                                : "appearance-editor-option"
+                        }
+                        onClick={handleDetachedToggle}
+                    >
+                        {appearance.is_detached
+                            ? "✓ Detached from lifeline"
+                            : "Detach from lifeline"}
+                    </button>
                 </div>
             )}
         </div>

@@ -182,7 +182,7 @@ body {
 .character-column {
   position: sticky;
   left: 0;
-  z-index: 2;
+  z-index: 3;
 
   display: flex;
   align-items: center;
@@ -302,6 +302,8 @@ body {
   right: 0;
 }
 
+/* appearance */
+
 .timeline-start-marker {
   position: absolute;
 
@@ -321,8 +323,6 @@ body {
 
   pointer-events: none;
 }
-
-/* appearance */
 
 .appearance-marker {
   position: relative;
@@ -435,4 +435,17 @@ body {
 .appearance-editor button:hover {
   background: var(--button-bg-hover);
   color: var(--text);
+}
+
+.appearance-editor-divider {
+  height: 1px;
+
+  margin: 5px 4px;
+
+  background: var(--border);
+}
+
+.appearance-editor-option.active {
+  color: var(--text);
+  background: var(--button-bg-hover);
 }
