@@ -34,18 +34,55 @@ export default function CharacterRow({
     onUpdateAppearance,
     onDeleteAppearance
 }: CharacterRowProps) {
+    const rowAppearances = projects.map((project) =>
+        appearances.find(
+            (appearance) =>
+                appearance.character_id === character.id &&
+                appearance.project_id === project.id
+        )
+    );
+
+    const connectedIndexes = rowAppearances
+        .map((appearance, index) =>
+            appearance && !appearance.is_detached
+                ? index
+                : -1
+        )
+        .filter((index) => index !== -1);
+
+    const firstConnectedIndex =
+        connectedIndexes.length > 0
+            ? connectedIndexes[0]
+            : -1;
+
+    const lastConnectedIndex =
+        connectedIndexes.length > 0
+            ? connectedIndexes[connectedIndexes.length - 1]
+            : -1;
+
     return (
         <div className="timeline-row">
             <div className="character-column">
                 {character.alias}
             </div>
 
-            {projects.map((project) => {
-                const appearance = appearances.find(
-                    (item) =>
-                        item.character_id === character.id &&
-                        item.project_id === project.id
-                );
+            {projects.map((project, index) => {
+                const appearance = rowAppearances[index];
+
+                const hasLifeline = firstConnectedIndex !== -1;
+
+                const lineLeft =
+                    hasLifeline &&
+                    index > firstConnectedIndex &&
+                    index <= lastConnectedIndex;
+
+                const lineRight =
+                    hasLifeline &&
+                    index >= firstConnectedIndex &&
+                    index < lastConnectedIndex;
+
+                const isFirstConnected =
+                    index === firstConnectedIndex;
 
                 return (
                     <TimelineCell
@@ -53,6 +90,9 @@ export default function CharacterRow({
                         characterId={character.id}
                         projectId={project.id}
                         appearance={appearance}
+                        lineLeft={lineLeft}
+                        lineRight={lineRight}
+                        isFirstConnected={isFirstConnected}
                         onCreate={onCreateAppearance}
                         onUpdate={onUpdateAppearance}
                         onDelete={onDeleteAppearance}

@@ -7,6 +7,10 @@ interface TimelineCellProps {
 
     appearance?: Appearance;
 
+    lineLeft: boolean;
+    lineRight: boolean;
+    isFirstConnected: boolean;
+
     onCreate: (
         characterId: number,
         projectId: number
@@ -28,6 +32,9 @@ export default function TimelineCell({
     characterId,
     projectId,
     appearance,
+    lineLeft,
+    lineRight,
+    isFirstConnected,
     onCreate,
     onUpdate,
     onDelete
@@ -92,6 +99,22 @@ export default function TimelineCell({
         );
 
         setEditorOpen(false);
+    }
+
+    function handleDetachedToggle(
+        event: React.MouseEvent
+    ) {
+        event.stopPropagation;
+
+        if (!appearance) return;
+
+        onUpdate(
+            characterId,
+            projectId,
+            {
+                is_detached: !appearance.is_detached
+            }
+        );
     }
 
     return (
