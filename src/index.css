@@ -263,7 +263,7 @@ body {
   background: rgba(255, 255, 255, 0.025);
 }
 
-.timeline-cell:not(:has(.appearance-dot)):hover::after {
+.timeline-cell:not(:has(.appearance-marker)):hover::after {
   content: "";
 
   position: absolute;
@@ -280,22 +280,71 @@ body {
 
 /* horizontal character timeline */
 
-.timeline-cell::before {
-  content: '';
-
+.timeline-line {
   position: absolute;
-  left: 0;
-  right: 0;
+  top: 50%;
+  z-index: 0;
 
   height: 1px;
+
   background: var(--timeline-line);
+
+  pointer-events: none;
+}
+
+.timeline-line-left {
+  left: 0;
+  right: 50%;
+}
+
+.timeline-line-right {
+  left: 50%;
+  right: 0;
+}
+
+.timeline-start-marker {
+  position: absolute;
+
+  left: calc(50% - 12px);
+  top: 50%;
+
+  z-index: 2;
+
+  width: 0;
+  height: 0;
+
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--text);
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
 }
 
 /* appearance */
 
-.appearance-dot {
+.appearance-marker {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  width: 15px;
+  height: 15px;
+
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.appearance-marker:hover {
+  transform: scale(1.2);
+}
+
+.appearance-standard::before {
+  content: '';
 
   width: 12px;
   height: 12px;
@@ -308,8 +357,37 @@ body {
   box-shadow: 0 0 0 1px var(--timeline-dot-border);
 }
 
-.appearance-dot:hover {
-  transform: scale(1.25);
+.appearance-flashback::before {
+  content: '';
+
+  width: 9px;
+  height: 9px;
+
+  border: 2px solid var(--accent-bg);
+
+  background: var(--text);
+
+  box-shadow: 0 0 0 1px var(--timeline-dot-border);
+
+  transform: rotate(45deg);
+}
+
+.appearance-footage::before {
+  content: '';
+
+  width: 10px;
+  height: 10px;
+
+  border: 2px solid var(--text);
+  border-radius: 2px;
+
+  background: var(--accent-bg);
+
+  box-shadow: 0 0 0 1px var(--timeline-dot-border);
+}
+
+.appearance-detached {
+  opacity: 0.4;
 }
 
 /* editor */

@@ -124,10 +124,33 @@ export default function TimelineCell({
             onClick={handleLeftClick}
             onContextMenu={handleRightClick}
         >
+            {lineLeft && (
+                <span className="timeline-line timeline-line-left" />
+            )}
+
+            {lineRight && (
+                <span className="timeline-line timeline-line-right" />
+            )}
+
+            {isFirstConnected && (
+                <span
+                    className="timeline-start-marker"
+                    title="Start of main timeline"
+                />
+            )}
+
             {appearance && (
                 <div
-                    className={`appearance-dot appearance-${appearance.appearance_type}`}
-                    title={appearance.appearance_type}
+                    className={`
+                        appearance-marker
+                        appearance-${appearance.appearance_type}
+                        ${appearance.is_detached ? "appearance-detached" : ""}
+                    `}
+                    title={
+                        appearance.is_detached
+                            ? `${appearance.appearance_type} - detached`
+                            : appearance.appearance_type
+                    }
                 />
             )}
 
