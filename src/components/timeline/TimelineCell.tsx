@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import type { Appearance } from "../../types/appearance";
+import type { Appearance, AppearanceType, AppearanceUpdate } from "../../types/appearance";
 
 interface TimelineCellProps {
     characterId: number;
     projectId: number;
+
     appearance?: Appearance;
 
     onCreate: (
@@ -14,7 +15,7 @@ interface TimelineCellProps {
     onUpdate: (
         characterId: number,
         projectId: number,
-        appearanceType: string
+        updates: AppearanceUpdate
     ) => void;
 
     onDelete: (
@@ -81,11 +82,13 @@ export default function TimelineCell({
         setEditorOpen(false);
     }
 
-    function handleTypeChange(type: string) {
+    function handleTypeChange(type: AppearanceType) {
         onUpdate(
             characterId,
             projectId,
-            type
+            {
+                appearance_type: type
+            }
         );
 
         setEditorOpen(false);

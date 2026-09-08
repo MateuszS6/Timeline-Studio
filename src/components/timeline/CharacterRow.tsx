@@ -1,4 +1,4 @@
-import type { Appearance } from "../../types/appearance";
+import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
 import type { Project } from "../../types/project";
 
@@ -17,7 +17,7 @@ interface CharacterRowProps {
     onUpdateAppearance: (
         characterId: number,
         projectId: number,
-        appearanceType: string
+        updates: AppearanceUpdate
     ) => void;
 
     onDeleteAppearance: (

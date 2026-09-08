@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createAppearance, deleteAppearance, getAppearances, updateAppearance } from "../../services/appearances";
 import { getCharacters } from "../../services/characters";
 import { getProjects } from "../../services/projects";
-import type { Appearance } from "../../types/appearance";
+import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
 import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
@@ -20,7 +20,7 @@ export default function TimelineGrid() {
         async function loadTimeline() {
             try {
                 setLoading(true);
-                
+
                 const [
                     projectsData,
                     charactersData,
@@ -30,19 +30,19 @@ export default function TimelineGrid() {
                     getCharacters(),
                     getAppearances()
                 ]);
-                
+
                 setProjects(projectsData);
                 setCharacters(charactersData);
                 setAppearances(appearancesData);
             } catch (error) {
                 console.error(error);
-                
+
                 setError("Could not load timeline.")
             } finally {
                 setLoading(false);
             }
         }
-        
+
         loadTimeline();
     }, []);
 
@@ -68,14 +68,14 @@ export default function TimelineGrid() {
     async function handleUpdateAppearance(
         characterId: number,
         projectId: number,
-        appearanceType: string
+        updates: AppearanceUpdate
     ) {
         try {
             const updatedAppearance =
                 await updateAppearance(
                     characterId,
                     projectId,
-                    appearanceType
+                    updates
                 )
 
             setAppearances((current) =>
@@ -110,7 +110,7 @@ export default function TimelineGrid() {
             console.error(error)
         }
     }
-    
+
     if (loading) return <p>Loading timeline...</p>
 
     if (error) return <p>{error}</p>;

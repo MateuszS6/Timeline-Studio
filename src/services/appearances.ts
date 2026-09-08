@@ -1,5 +1,5 @@
 import { supabase } from "../config/supabase";
-import type { Appearance } from "../types/appearance";
+import type { Appearance, AppearanceType, AppearanceUpdate } from "../types/appearance";
 
 export async function getAppearances(): Promise<Appearance[]> {
     const { data, error } = await supabase
@@ -14,7 +14,7 @@ export async function getAppearances(): Promise<Appearance[]> {
 export async function createAppearance(
     characterId: number,
     projectId: number,
-    appearanceType = "standard"
+    appearanceType: AppearanceType = "standard"
 ): Promise<Appearance> {
     const { data, error } = await supabase
         .from("appearances")
@@ -34,13 +34,11 @@ export async function createAppearance(
 export async function updateAppearance(
     characterId: number,
     projectId: number,
-    appearanceType: string
+    updates: AppearanceUpdate
 ): Promise<Appearance> {
     const { data, error } = await supabase
         .from("appearances")
-        .update({
-            appearance_type: appearanceType
-        })
+        .update(updates)
         .eq("character_id", characterId)
         .eq("project_id", projectId)
         .select()
