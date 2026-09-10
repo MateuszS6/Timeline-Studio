@@ -75,7 +75,8 @@ export default function TimelineCell({
             return;
         }
 
-        setEditorOpen((open) => !open);
+        onDelete(characterId, projectId);
+        setEditorOpen(false);
     }
 
     function handleRightClick(
@@ -85,8 +86,7 @@ export default function TimelineCell({
 
         if (!appearance) return;
 
-        onDelete(characterId, projectId);
-        setEditorOpen(false);
+        setEditorOpen((open) => !open);
     }
 
     function handleTypeChange(type: AppearanceType) {
