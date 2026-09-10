@@ -9,7 +9,7 @@ export default function TimelinePage() {
       <main className='main-content'>
         <header className='page-header'>
           <h1>MCU Timeline</h1>
-          <p>Character appearances across projects</p>
+          <p>Character lifelines showing appearances across projects</p>
         </header>
 
         <TimelineGrid />
