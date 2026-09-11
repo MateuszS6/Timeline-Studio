@@ -104,7 +104,7 @@ export default function TimelineCell({
     function handleDetachedToggle(
         event: React.MouseEvent
     ) {
-        event.stopPropagation;
+        event.stopPropagation();
 
         if (!appearance) return;
 
