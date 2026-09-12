@@ -20,3 +20,15 @@ create table
         is_detached boolean not null default false,
         primary key (character_id, project_id)
     );
+
+create table
+    character_events (
+        id bigint generated always as identity primary key,
+        character_id bigint not null references characters (id) on delete cascade,
+        project_id bigint not null references projects (id) on delete cascade,
+        event_type text not null check (
+            event_type in ('death', 'revival', 'blip', 'return')
+        ),
+        event_position text not null default 'at' check (event_position in ('at', 'after')),
+        unique (character_id, project_id)
+    );
