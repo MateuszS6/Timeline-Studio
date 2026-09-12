@@ -4,14 +4,17 @@ import { getCharacters } from "../../services/characters";
 import { getProjects } from "../../services/projects";
 import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
+import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../../types/characterEvent";
 import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
 import TimelineHeader from "./TimelineHeader";
+import { deleteCharacterEvent, getCharacterEvents, saveCharacterEvent } from "../../services/characterEvents";
 
 export default function TimelineGrid() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [characters, setCharacters] = useState<Character[]>([]);
     const [appearances, setAppearances] = useState<Appearance[]>([]);
+    const [characterEvents, setCharacterEvents] = useState<CharacterEvent[]>([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -24,16 +27,19 @@ export default function TimelineGrid() {
                 const [
                     projectsData,
                     charactersData,
-                    appearancesData
+                    appearancesData,
+                    characterEventsData
                 ] = await Promise.all([
                     getProjects(),
                     getCharacters(),
-                    getAppearances()
+                    getAppearances(),
+                    getCharacterEvents()
                 ]);
 
                 setProjects(projectsData);
                 setCharacters(charactersData);
                 setAppearances(appearancesData);
+                setCharacterEvents(characterEventsData);
             } catch (error) {
                 console.error(error);
 
@@ -111,6 +117,65 @@ export default function TimelineGrid() {
         }
     }
 
+    async function handleSaveCharacterEvent(
+        characterId: number,
+        projectId: number,
+        eventType: CharacterEventType,
+        eventPosition: CharacterEventPosition
+    ) {
+        try {
+            const savedEvent = await saveCharacterEvent(
+                characterId,
+                projectId,
+                eventType,
+                eventPosition
+            );
+
+            setCharacterEvents((current) => {
+                const alreadyExists = current.some(
+                    (event) =>
+                        event.character_id === characterId &&
+                        event.project_id === projectId
+                );
+
+                if (!alreadyExists) return [...current, savedEvent];
+
+                return current.map((event) =>
+                    event.character_id === characterId &&
+                        event.project_id === projectId
+                        ? savedEvent
+                        : event
+                )
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function handleDeleteCharacterEvent(
+        characterId: number,
+        projectId: number
+    ) {
+        try {
+            await deleteCharacterEvent(
+                characterId,
+                projectId
+            );
+
+            setCharacterEvents((current) =>
+                current.filter(
+                    (event) =>
+                        !(
+                            event.character_id === characterId &&
+                            event.project_id === projectId
+                        )
+                )
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     if (loading) return <p>Loading timeline...</p>
 
     if (error) return <p>{error}</p>;
@@ -126,9 +191,12 @@ export default function TimelineGrid() {
                         character={character}
                         projects={projects}
                         appearances={appearances}
+                        characterEvents={characterEvents} // TODO
                         onCreateAppearance={handleCreateAppearance}
                         onUpdateAppearance={handleUpdateAppearance}
                         onDeleteAppearance={handleDeleteAppearance}
+                        onSaveCharacterEvent={handleSaveCharacterEvent} // TODO
+                        onDeleteCharacterEvent={handleDeleteCharacterEvent} // TODO
                     />
                 ))}
             </div>
