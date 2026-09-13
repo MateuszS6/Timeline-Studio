@@ -75,8 +75,7 @@ export default function TimelineCell({
             return;
         }
 
-        onDelete(characterId, projectId);
-        setEditorOpen(false);
+        setEditorOpen((open) => !open);
     }
 
     function handleRightClick(
@@ -84,8 +83,13 @@ export default function TimelineCell({
     ) {
         event.preventDefault();
 
-        if (!appearance) return;
+        if (appearance) {
+            onDelete(characterId, projectId);
+            setEditorOpen(false);
+            return;
+        }
 
+        // Empty cell can still contain/edit a timeline event.
         setEditorOpen((open) => !open);
     }
 
@@ -154,46 +158,57 @@ export default function TimelineCell({
                 />
             )}
 
-            {editorOpen && appearance && (
-                <div
-                    className="appearance-editor"
-                    onClick={(event) =>
-                        event.stopPropagation()
-                    }
-                >
-                    <button
-                        onClick={() => handleTypeChange("standard")}
-                    >
-                        Standard
-                    </button>
-
-                    <button
-                        onClick={() => handleTypeChange("flashback")}
-                    >
-                        Flashback
-                    </button>
-
-                    <button
-                        onClick={() => handleTypeChange("footage")}
-                    >
-                        Footage
-                    </button>
-
-                    <div className="appearance-editor-divider" />
-
-                    <button
-                        className={
-                            appearance.is_detached
-                                ? "appearance-editor-option active"
-                                : "appearance-editor-option"
+            {editorOpen && (
+                appearance ? (
+                    <div
+                        className="appearance-editor"
+                        onClick={(event) =>
+                            event.stopPropagation()
                         }
-                        onClick={handleDetachedToggle}
                     >
-                        {appearance.is_detached
-                            ? "✓ Detached from lifeline"
-                            : "Detach from lifeline"}
+                        <button
+                            onClick={() => handleTypeChange("standard")}
+                        >
+                            Standard
+                        </button>
+
+                        <button
+                            onClick={() => handleTypeChange("flashback")}
+                        >
+                            Flashback
+                        </button>
+
+                        <button
+                            onClick={() => handleTypeChange("footage")}
+                        >
+                            Footage
+                        </button>
+
+                        <div className="appearance-editor-divider" />
+
+                        <button
+                            className={
+                                appearance.is_detached
+                                    ? "appearance-editor-option active"
+                                    : "appearance-editor-option"
+                            }
+                            onClick={handleDetachedToggle}
+                        >
+                            {appearance.is_detached
+                                ? "✓ Detached from lifeline"
+                                : "Detach from lifeline"}
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => {
+                            onCreate(characterId, projectId);
+                            setEditorOpen(false);
+                        }}
+                    >
+                        Add standard appearance
                     </button>
-                </div>
+                )
             )}
         </div>
     );
