@@ -1,6 +1,9 @@
+import { getCharacterEvents } from "../../services/characterEvents";
 import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
+import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../../types/characterEvent";
 import type { Project } from "../../types/project";
+import { buildLifelineSegments } from "../../utils/buildLifelineSegments";
 
 import TimelineCell from "./TimelineCell";
 
@@ -8,6 +11,7 @@ interface CharacterRowProps {
     character: Character;
     projects: Project[];
     appearances: Appearance[];
+    characterEvents: CharacterEvent[];
 
     onCreateAppearance: (
         characterId: number,
@@ -24,15 +28,30 @@ interface CharacterRowProps {
         characterId: number,
         projectId: number
     ) => void;
+
+    onSaveCharacterEvent: (
+        characterId: number,
+        projectId: number,
+        eventType: CharacterEventType,
+        eventPosition: CharacterEventPosition
+    ) => void;
+
+    onDeleteCharacterEvent: (
+        characterId: number,
+        projectId: number
+    ) => void;
 }
 
 export default function CharacterRow({
     character,
     projects,
     appearances,
+    characterEvents,
     onCreateAppearance,
     onUpdateAppearance,
-    onDeleteAppearance
+    onDeleteAppearance,
+    onSaveCharacterEvent,
+    onDeleteCharacterEvent
 }: CharacterRowProps) {
     const rowAppearances = projects.map((project) =>
         appearances.find(
@@ -42,23 +61,26 @@ export default function CharacterRow({
         )
     );
 
-    const connectedIndexes = rowAppearances
-        .map((appearance, index) =>
-            appearance && !appearance.is_detached
-                ? index
-                : -1
+    const rowEvents = projects.map((project) =>
+        characterEvents.find(
+            (event) =>
+                event.character_id === character.id &&
+                event.project_id === project.id
         )
-        .filter((index) => index !== -1);
+    );
+
+    const lifelineSegments =
+        buildLifelineSegments(
+            rowAppearances,
+            rowEvents
+        );
 
     const firstConnectedIndex =
-        connectedIndexes.length > 0
-            ? connectedIndexes[0]
-            : -1;
-
-    const lastConnectedIndex =
-        connectedIndexes.length > 0
-            ? connectedIndexes[connectedIndexes.length - 1]
-            : -1;
+        rowAppearances.findIndex(
+            (appearance) =>
+                appearance !== undefined &&
+                !appearance.is_detached
+        )
 
     return (
         <div className="timeline-row">
@@ -68,18 +90,19 @@ export default function CharacterRow({
 
             {projects.map((project, index) => {
                 const appearance = rowAppearances[index];
+                const characterEvent = rowEvents[index];
 
-                const hasLifeline = firstConnectedIndex !== -1;
+                const lineLeft = lifelineSegments.some(
+                    (segment) =>
+                        segment.start < index &&
+                        segment.end >= index
+                )
 
-                const lineLeft =
-                    hasLifeline &&
-                    index > firstConnectedIndex &&
-                    index <= lastConnectedIndex;
-
-                const lineRight =
-                    hasLifeline &&
-                    index >= firstConnectedIndex &&
-                    index < lastConnectedIndex;
+                const lineRight = lifelineSegments.some(
+                    (segment) =>
+                        segment.start <= index &&
+                        segment.end > index
+                )
 
                 const isFirstConnected =
                     index === firstConnectedIndex;
@@ -90,12 +113,15 @@ export default function CharacterRow({
                         characterId={character.id}
                         projectId={project.id}
                         appearance={appearance}
+                        characterEvent={characterEvent}
                         lineLeft={lineLeft}
                         lineRight={lineRight}
                         isFirstConnected={isFirstConnected}
                         onCreate={onCreateAppearance}
                         onUpdate={onUpdateAppearance}
                         onDelete={onDeleteAppearance}
+                        onSaveCharacterEvent={onSaveCharacterEvent}
+                        onDeleteCharacterEvent={onDeleteCharacterEvent}
                     />
                 );
             })}
