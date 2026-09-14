@@ -1,4 +1,3 @@
-import { getCharacterEvents } from "../../services/characterEvents";
 import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
 import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../../types/characterEvent";

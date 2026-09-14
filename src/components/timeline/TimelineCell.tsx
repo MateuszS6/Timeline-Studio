@@ -180,6 +180,8 @@ export default function TimelineCell({
             onClick={handleLeftClick}
             onContextMenu={handleRightClick}
         >
+            {/* CONNECTORS */}
+
             {lineLeft && (
                 <span className="timeline-line timeline-line-left" />
             )}
@@ -187,6 +189,8 @@ export default function TimelineCell({
             {lineRight && (
                 <span className="timeline-line timeline-line-right" />
             )}
+
+            {/* MARKER */}
 
             {isFirstConnected && (
                 <span
@@ -210,57 +214,184 @@ export default function TimelineCell({
                 />
             )}
 
+            {/* EDITOR */}
+
             {editorOpen && (
-                appearance ? (
-                    <div
-                        className="appearance-editor"
-                        onClick={(event) =>
-                            event.stopPropagation()
+                <div
+                    className="appearance-editor"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    {/* APPEARANCE SECTION */}
+
+                    {appearance ? (
+                        <>
+                            <button
+                                className={
+                                    appearance.appearance_type === "standard"
+                                        ? "appearance-editor-option active"
+                                        : "appearance-editor-option"
+                                }
+                                onClick={() => handleAppearanceTypeChange("standard")}
+                            >
+                                Standard
+                            </button>
+
+                            <button
+                                className={
+                                    appearance.appearance_type === "flashback"
+                                        ? "appearance-editor-option active"
+                                        : "appearance-editor-option"
+                                }
+                                onClick={() => handleAppearanceTypeChange("flashback")}
+                            >
+                                Flashback
+                            </button>
+
+                            <button
+                                className={
+                                    appearance.appearance_type === "footage"
+                                        ? "appearance-editor-option active"
+                                        : "appearance-editor-option"
+                                }
+                                onClick={() => handleAppearanceTypeChange("footage")}
+                            >
+                                Footage
+                            </button>
+
+                            <div className="appearance-editor-divider" />
+
+                            <button
+                                className={
+                                    appearance.is_detached
+                                        ? "appearance-editor-option active"
+                                        : "appearance-editor-option"
+                                }
+                                onClick={handleDetachedToggle}
+                            >
+                                {appearance.is_detached
+                                    ? "✓ Detached from lifeline"
+                                    : "Detach from lifeline"}
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            className="appearance-editor-option"
+                            onClick={() => {
+                                onCreate(characterId, projectId);
+                                setEditorOpen(false);
+                            }}
+                        >
+                            Add standard appearance
+                        </button>
+                    )}
+
+                    {/* EVENT SECTION */}
+
+                    <div className="appearance-editor-divider" />
+
+                    <div className="appearance-editor-label">
+                        Timeline event
+                    </div>
+
+                    <button
+                        className={
+                            characterEvent?.event_type === "death"
+                                ? "appearance-editor-option active"
+                                : "appearance-editor-option"
+                        }
+                        onClick={() =>
+                            handleEventTypeChange("death")
                         }
                     >
-                        <button
-                            onClick={() => handleTypeChange("standard")}
-                        >
-                            Standard
-                        </button>
-
-                        <button
-                            onClick={() => handleTypeChange("flashback")}
-                        >
-                            Flashback
-                        </button>
-
-                        <button
-                            onClick={() => handleTypeChange("footage")}
-                        >
-                            Footage
-                        </button>
-
-                        <div className="appearance-editor-divider" />
-
-                        <button
-                            className={
-                                appearance.is_detached
-                                    ? "appearance-editor-option active"
-                                    : "appearance-editor-option"
-                            }
-                            onClick={handleDetachedToggle}
-                        >
-                            {appearance.is_detached
-                                ? "✓ Detached from lifeline"
-                                : "Detach from lifeline"}
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        onClick={() => {
-                            onCreate(characterId, projectId);
-                            setEditorOpen(false);
-                        }}
-                    >
-                        Add standard appearance
+                        Death
                     </button>
-                )
+
+                    <button
+                        className={
+                            characterEvent?.event_type === "revival"
+                                ? "appearance-editor-option active"
+                                : "appearance-editor-option"
+                        }
+                        onClick={() =>
+                            handleEventTypeChange("revival")
+                        }
+                    >
+                        Revival
+                    </button>
+
+                    <button
+                        className={
+                            characterEvent?.event_type === "blip"
+                                ? "appearance-editor-option active"
+                                : "appearance-editor-option"
+                        }
+                        onClick={() =>
+                            handleEventTypeChange("blip")
+                        }
+                    >
+                        Blip
+                    </button>
+
+                    <button
+                        className={
+                            characterEvent?.event_type === "return"
+                                ? "appearance-editor-option active"
+                                : "appearance-editor-option"
+                        }
+                        onClick={() =>
+                            handleEventTypeChange("return")
+                        }
+                    >
+                        Return
+                    </button>
+
+                    {/* EVENT OPTIONS */}
+
+                    {characterEvent && (
+                        <>
+                            <div className="appearance-editor-divider" />
+
+                            <div className="appearance-editor-label">
+                                Event position
+                            </div>
+
+                            <button
+                                className={
+                                    characterEvent.event_position === "at"
+                                        ? "appearance-editor-option active"
+                                        : "appearance-editor-option"
+                                }
+                                onClick={() =>
+                                    handleEventPositionChange("at")
+                                }
+                            >
+                                At project
+                            </button>
+
+                            <button
+                                className={
+                                    characterEvent.event_position === "after"
+                                        ? "appearance-editor-option active"
+                                        : "appearance-editor-option"
+                                }
+                                onClick={() =>
+                                    handleEventPositionChange("after")
+                                }
+                            >
+                                After project
+                            </button>
+
+                            <div className="appearance-editor-divider" />
+
+                            <button
+                                className="appearance-editor-option appearance-editor-danger"
+                                onClick={handleDeleteEvent}
+                            >
+                                Remove event
+                            </button>
+                        </>
+                    )}
+                </div>
             )}
         </div>
     );
