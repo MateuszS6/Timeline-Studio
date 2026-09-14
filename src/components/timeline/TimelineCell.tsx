@@ -214,6 +214,23 @@ export default function TimelineCell({
                 />
             )}
 
+            {characterEvent && (
+                <span
+                    className={`
+                        timeline-event
+                        timeline-event-${characterEvent.event_type}
+                        timeline-event-${characterEvent.event_position}
+                        ${appearance ? "timeline-event-with-appearance" : ""}
+                    `}
+                    title={characterEvent.event_type}
+                >
+                    {characterEvent.event_type === "death" && "×"}
+                    {characterEvent.event_type === "revival" && "↻"}
+                    {characterEvent.event_type === "blip" && "✦"}
+                    {characterEvent.event_type === "return" && "↺"}
+                </span>
+            )}
+
             {/* EDITOR */}
 
             {editorOpen && (
