@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import type { Appearance, AppearanceType, AppearanceUpdate } from "../../types/appearance";
+import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../../types/characterEvent";
 
 interface TimelineCellProps {
     characterId: number;
     projectId: number;
 
     appearance?: Appearance;
+    characterEvent?: CharacterEvent;
 
     lineLeft: boolean;
     lineRight: boolean;
@@ -26,18 +28,33 @@ interface TimelineCellProps {
         characterId: number,
         projectId: number
     ) => void;
+
+    onSaveEvent: (
+        characterId: number,
+        projectId: number,
+        eventType: CharacterEventType,
+        eventPosition: CharacterEventPosition
+    ) => void;
+
+    onDeleteEvent: (
+        characterId: number,
+        projectId: number
+    ) => void;
 }
 
 export default function TimelineCell({
     characterId,
     projectId,
     appearance,
+    characterEvent,
     lineLeft,
     lineRight,
     isFirstConnected,
     onCreate,
     onUpdate,
-    onDelete
+    onDelete,
+    onSaveEvent,
+    onDeleteEvent
 }: TimelineCellProps) {
     const [editorOpen, setEditorOpen] = useState(false);
     const cellRef = useRef<HTMLDivElement>(null);
@@ -93,7 +110,7 @@ export default function TimelineCell({
         setEditorOpen((open) => !open);
     }
 
-    function handleTypeChange(type: AppearanceType) {
+    function handleAppearanceTypeChange(type: AppearanceType) {
         onUpdate(
             characterId,
             projectId,
@@ -118,6 +135,41 @@ export default function TimelineCell({
             {
                 is_detached: !appearance.is_detached
             }
+        );
+    }
+
+    function handleEventTypeChange(
+        type: CharacterEventType
+    ) {
+        onSaveEvent(
+            characterId,
+            projectId,
+            type,
+            characterEvent?.event_position ?? "at"
+        );
+    }
+
+    function handleEventPositionChange(
+        position: CharacterEventPosition
+    ) {
+        if (!characterEvent) return;
+
+        onSaveEvent(
+            characterId,
+            projectId,
+            characterEvent.event_type,
+            position
+        );
+    }
+
+    function handleDeleteEvent(
+        event: React.MouseEvent
+    ) {
+        event.stopPropagation();
+
+        onDeleteEvent(
+            characterId,
+            projectId
         );
     }
 

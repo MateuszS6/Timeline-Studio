@@ -120,8 +120,8 @@ export default function CharacterRow({
                         onCreate={onCreateAppearance}
                         onUpdate={onUpdateAppearance}
                         onDelete={onDeleteAppearance}
-                        onSaveCharacterEvent={onSaveCharacterEvent}
-                        onDeleteCharacterEvent={onDeleteCharacterEvent}
+                        onSaveEvent={onSaveCharacterEvent}
+                        onDeleteEvent={onDeleteCharacterEvent}
                     />
                 );
             })}
