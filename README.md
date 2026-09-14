@@ -1,12 +1,16 @@
-# Timeline Studio: A Marvel Timelines App
+# Timeline Studio: Marvel Timelines
 
 _A personal, responsive viewer and editor of movie timelines and characters._
 
+## The Aim
+
+To build a feature-packed application with several franchise timelines, and up-to-date project and character viewers and statistics.
+
 ## Progress
 
-> Version 0.1.2: Appearance Types & Connectors
+> Version 0.1.3: Advanced Connectors & Character Events
 > 
-> ![App](docs/images/timeline-studio-v0.1.2-connectors.png)
+> ![App](docs/images/timeline-studio-v0.1.3-character-events.png)
 
 See all progress screenshots [here](docs/images).
 
