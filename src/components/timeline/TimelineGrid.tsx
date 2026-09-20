@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
-import { createAppearance, deleteAppearance, getAppearances, updateAppearance } from "../../services/appearances";
-import { getCharacters } from "../../services/characters";
-import { getProjects } from "../../services/projects";
+import { createAppearance, deleteAppearance, getAppearancesForProjects, updateAppearance } from "../../services/appearances";
+import { getCharactersByIds } from "../../services/characters";
+import { getProjectsForUniverse } from "../../services/projects";
 import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
 import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../../types/characterEvent";
 import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
 import TimelineHeader from "./TimelineHeader";
-import { deleteCharacterEvent, getCharacterEvents, saveCharacterEvent } from "../../services/characterEvents";
+import { deleteCharacterEvent, getCharacterEventsForProjects, saveCharacterEvent } from "../../services/characterEvents";
 
-export default function TimelineGrid() {
+interface TimelineGridProps {
+    universeId: number;
+}
+
+export default function TimelineGrid({
+    universeId
+}: TimelineGridProps) {
+    
     const [projects, setProjects] = useState<Project[]>([]);
     const [characters, setCharacters] = useState<Character[]>([]);
     const [appearances, setAppearances] = useState<Appearance[]>([]);
@@ -24,17 +31,30 @@ export default function TimelineGrid() {
             try {
                 setLoading(true);
 
+                const projectsData = await getProjectsForUniverse(universeId);
+
+                const projectIds = projectsData.map((project) => project.id);
+
                 const [
-                    projectsData,
-                    charactersData,
                     appearancesData,
                     characterEventsData
                 ] = await Promise.all([
-                    getProjects(),
-                    getCharacters(),
-                    getAppearances(),
-                    getCharacterEvents()
+                    getAppearancesForProjects(projectIds),
+                    getCharacterEventsForProjects(projectIds)
                 ]);
+
+                const characterIds = Array.from(
+                    new Set([
+                        ...appearancesData.map(
+                            (appearance) => appearance.character_id
+                        ),
+                        ...characterEventsData.map(
+                            (event) => event.character_id
+                        )
+                    ])
+                );
+
+                const charactersData = await getCharactersByIds(characterIds);
 
                 setProjects(projectsData);
                 setCharacters(charactersData);
@@ -50,7 +70,7 @@ export default function TimelineGrid() {
         }
 
         loadTimeline();
-    }, []);
+    }, [universeId]);
 
     async function handleCreateAppearance(
         characterId: number,
@@ -174,6 +194,10 @@ export default function TimelineGrid() {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    if (!universeId) {
+        return <p>Select a universe to load the timeline.</p>;
     }
 
     if (loading) return <p>Loading timeline...</p>

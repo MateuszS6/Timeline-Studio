@@ -12,7 +12,7 @@ export default function TimelinePage() {
           <p>Character lifelines showing appearances across projects</p>
         </header>
 
-        <TimelineGrid />
+        <TimelineGrid universeId={1}/>
       </main>
     </div>
 

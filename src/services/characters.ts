@@ -1,11 +1,18 @@
 import { supabase } from "../config/supabase";
 import type { Character } from "../types/character";
 
-export async function getCharacters(): Promise<Character[]> {
+export async function getCharactersByIds(
+    characterIds: number[]
+): Promise<Character[]> {
+    if (characterIds.length === 0) {
+        return [];
+    }
+
     const { data, error } = await supabase
         .from("characters")
         .select("*")
-        .order("alias", { ascending: true });
+        .in("id", characterIds)
+        .order("alias");
 
     if (error) throw error;
 

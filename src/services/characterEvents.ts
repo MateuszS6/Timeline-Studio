@@ -1,10 +1,17 @@
 import { supabase } from "../config/supabase";
 import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../types/characterEvent";
 
-export async function getCharacterEvents(): Promise<CharacterEvent[]> {
+export async function getCharacterEventsForProjects(
+    projectIds: number[]
+): Promise<CharacterEvent[]> {
+    if (projectIds.length === 0) {
+        return [];
+    }
+
     const { data, error } = await supabase
         .from("character_events")
-        .select("*");
+        .select("*")
+        .in("project_id", projectIds);
 
     if (error) throw error;
 

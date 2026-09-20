@@ -1,10 +1,17 @@
 import { supabase } from "../config/supabase";
 import type { Appearance, AppearanceType, AppearanceUpdate } from "../types/appearance";
 
-export async function getAppearances(): Promise<Appearance[]> {
+export async function getAppearancesForProjects(
+    projectIds: number[]
+): Promise<Appearance[]> {
+    if (projectIds.length === 0) {
+        return [];
+    }
+
     const { data, error } = await supabase
         .from("appearances")
-        .select("*");
+        .select("*")
+        .in("project_id", projectIds);
 
     if (error) throw error;
 
