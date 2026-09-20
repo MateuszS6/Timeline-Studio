@@ -14,19 +14,6 @@ create table
     );
 
 create table
-    timelines (
-        id bigint generated always as identity primary key,
-        universe_id bigint not null references universes (id),
-        name text not null,
-        is_default boolean not null default false,
-        unique (universe_id, name)
-    );
-
-create unique index one_default_timeline_per_universe on timelines (universe_id)
-where
-    is_default;
-
-create table
     projects (
         id bigint generated always as identity primary key,
         title text not null,
@@ -36,12 +23,12 @@ create table
     );
 
 create table
-    timeline_projects (
-        timeline_id bigint not null references timelines (id) on delete cascade,
+    universe_projects (
+        universe_id bigint not null references universes (id) on delete cascade,
         project_id bigint not null references projects (id) on delete cascade,
-        position integer not null check (position > 0),
-        primary key (timeline_id, project_id),
-        unique (timeline_id, position)
+        timeline_position integer not null check (position > 0),
+        primary key (universe_id, project_id),
+        unique (universe_id, timeline_position)
     );
 
 create table

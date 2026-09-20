@@ -4,3 +4,9 @@ export interface Universe {
     name: string;
     code: string | null;
 }
+
+export interface UniverseProjects {
+    universe_id: number;
+    project_id: number;
+    timeline_position: number;
+}
