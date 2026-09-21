@@ -42,7 +42,7 @@ export async function saveCharacterEvent(
 
     if (error) throw error;
 
-    return data ?? [];
+    return data;
 }
 
 export async function deleteCharacterEvent(

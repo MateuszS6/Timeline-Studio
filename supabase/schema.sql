@@ -18,7 +18,6 @@ create table
         id bigint generated always as identity primary key,
         title text not null,
         release_date date,
-        timeline_order integer,
         primary_universe_id bigint references universes (id) on delete set null
     );
 
