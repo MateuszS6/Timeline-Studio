@@ -5,7 +5,7 @@
     flex-shrink: 0;
 
     padding: 24px 16px;
-    overflow-y: 24px 16px;
+    overflow-y: auto;
 
     border-right: 1px solid var(--border-primary);
     background: var(--surface-alt);
@@ -24,6 +24,7 @@
 .sidebar-logo {
     display: grid;
     place-items: center;
+    flex-shrink: 0;
 
     width: 32px;
     height: 32px;

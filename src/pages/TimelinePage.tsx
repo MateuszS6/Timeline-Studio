@@ -6,11 +6,16 @@ export default function TimelinePage() {
   const {
     franchises,
     universes,
+    selectedFranchiseId,
     selectedUniverseId,
     loading,
     error,
     retryWorkspace
   } = useWorkspace();
+
+  const selectedFranchise = franchises.find(
+    (franchise) => franchise.id === selectedFranchiseId
+  );
 
   const selectedUniverse = universes.find(
     (universe) => universe.id === selectedUniverseId
@@ -23,9 +28,15 @@ export default function TimelinePage() {
       <main className='main-content'>
         <header className='page-header'>
           <h1>{selectedUniverse?.name ?? "Timeline"}</h1>
-          <p>
-            Character lifelines showing appearances across projects
-          </p>
+          {selectedFranchise?.name === "Marvel" && selectedUniverse?.code ? (
+            <p>
+              Character lifelines for Earth-{selectedUniverse?.code}
+            </p>
+          ) : (
+            <p>
+              Character lifelines showing appearances across projects
+            </p>
+          )}
         </header>
 
         {loading ? (

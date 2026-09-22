@@ -1,18 +1,25 @@
 # Timeline Studio: Marvel Timelines
 
-_A personal, responsive viewer and editor of movie timelines and characters._
+_A personal tool for exploring and editing fictional-media timelines,
+starting with the Marvel Cinematic Universe._
+
+Inspired by an Excel workflow, Timeline Studio places characters in rows
+and projects in chronological columns, with appearance markers and
+automatically calculated character lifelines.
+
+## Current version — `0.2.0`
+
+Franchise and universe workspaces, and improved loading and error handling.
+
+> ![App](docs/images/timeline-studio-0.2.0-workspaces.png)
 
 ## The Aim
 
-To build a feature-packed application with several franchise timelines, and up-to-date project and character viewers and statistics.
+To build a feature-packed application showing various film franchise timelines with up-to-date project and character viewers and statistics.
 
-## Progress
+## Screenshots
 
-> Version 0.1.3: Advanced Connectors & Character Events
-> 
-> ![App](docs/images/timeline-studio-v0.1.3-character-events.png)
-
-See all progress screenshots [here](docs/images).
+See the [progress screenshots](docs/images).
 
 ## Stack
 

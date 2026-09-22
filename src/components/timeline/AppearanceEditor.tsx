@@ -42,7 +42,7 @@ export default function AppearanceEditor({
 
             const maxTop = Math.max(
                 margin,
-                Math.min(left, maxLeft)
+                window.innerHeight - editorBounds.height - margin
             );
 
             editor.style.left = `${Math.max(
@@ -115,7 +115,8 @@ export default function AppearanceEditor({
             className="appearance-editor"
             role="dialog"
             aria-label="Appearance and timeline event"
-            onClick={(event) => {
+            onClick={(event) => event.stopPropagation()}
+            onContextMenu={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
             }}
