@@ -1,0 +1,87 @@
+.app-layout {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 28px;
+    overflow: hidden;
+}
+
+.page-header {
+    flex-shrink: 0;
+}
+
+.page-header h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    overflow-wrap: anywhere;
+}
+
+.page-header p {
+    margin: 0;
+    color: var(--color-secondary);
+}
+
+.status-message {
+    flex-shrink: 0;
+    margin: 0;
+    color: var(--color-secondary);
+}
+
+.status-message p {
+    margin: 0 0 10px;
+}
+
+.status-error {
+    padding: 12px 14px;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    background: var(--surface-elevated);
+    color: var(--color-danger);
+}
+
+.utility-button {
+    padding: 6px 10px;
+
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+
+    background: var(--surface-overlay);
+    color: var(--color-primary);
+
+    cursor: pointer;
+}
+
+.utility-button:hover {
+    background: var(--button-bg-active);
+}
+
+@media (max-width: 700px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .main-content {
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .page-header h1 {
+        font-size: 22px;
+    }
+
+    .page-header p {
+        font-size: 14px;
+    }
+}
