@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { Appearance, AppearanceType, AppearanceUpdate } from "../../types/appearance";
 import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from "../../types/characterEvent";
+import AppearanceEditor from "./AppearanceEditor";
 
 interface TimelineCellProps {
     characterId: number;
@@ -59,32 +60,9 @@ export default function TimelineCell({
     const [editorOpen, setEditorOpen] = useState(false);
     const cellRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (!editorOpen) return;
-
-        function handleClickOutside(event: MouseEvent) {
-            if (
-                cellRef.current &&
-                !cellRef.current.contains(event.target as Node)
-            ) {
-                setEditorOpen(false);
-            }
-        }
-
-        function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") {
-                setEditorOpen(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        document.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [editorOpen])
+    const closeEditor = useCallback(() => {
+        setEditorOpen(false);
+    }, []);
 
     function handleLeftClick() {
         if (!appearance) {
@@ -234,9 +212,9 @@ export default function TimelineCell({
             {/* EDITOR */}
 
             {editorOpen && (
-                <div
-                    className="appearance-editor"
-                    onClick={(event) => event.stopPropagation()}
+                <AppearanceEditor
+                    anchorRef={cellRef}
+                    onClose={closeEditor}
                 >
                     {/* APPEARANCE SECTION */}
 
@@ -408,7 +386,7 @@ export default function TimelineCell({
                             </button>
                         </>
                     )}
-                </div>
+                </AppearanceEditor>
             )}
         </div>
     );

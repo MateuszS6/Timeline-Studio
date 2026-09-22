@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createAppearance, deleteAppearance, getAppearancesForProjects, updateAppearance } from "../../services/appearances";
+import { deleteCharacterEvent, getCharacterEventsForProjects, saveCharacterEvent } from "../../services/characterEvents";
 import { getCharactersByIds } from "../../services/characters";
 import { getProjectsForUniverse } from "../../services/projects";
 import type { Appearance, AppearanceUpdate } from "../../types/appearance";
@@ -8,7 +9,6 @@ import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from 
 import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
 import TimelineHeader from "./TimelineHeader";
-import { deleteCharacterEvent, getCharacterEventsForProjects, saveCharacterEvent } from "../../services/characterEvents";
 
 interface TimelineGridProps {
     universeId: number;
@@ -17,7 +17,7 @@ interface TimelineGridProps {
 export default function TimelineGrid({
     universeId
 }: TimelineGridProps) {
-    
+
     const [projects, setProjects] = useState<Project[]>([]);
     const [characters, setCharacters] = useState<Character[]>([]);
     const [appearances, setAppearances] = useState<Appearance[]>([]);
@@ -26,22 +26,26 @@ export default function TimelineGrid({
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const [loadAttempt, setLoadAttempt] = useState(0);
+    const [actionError, setActionError] = useState<string | null>(null);
+
     useEffect(() => {
+        let cancelled = false;
+
         async function loadTimeline() {
             try {
-                setLoading(true);
-
                 const projectsData = await getProjectsForUniverse(universeId);
+
+                if (cancelled) return;
 
                 const projectIds = projectsData.map((project) => project.id);
 
-                const [
-                    appearancesData,
-                    characterEventsData
-                ] = await Promise.all([
+                const [appearancesData, characterEventsData] = await Promise.all([
                     getAppearancesForProjects(projectIds),
                     getCharacterEventsForProjects(projectIds)
                 ]);
+
+                if (cancelled) return;
 
                 const characterIds = Array.from(
                     new Set([
@@ -56,26 +60,42 @@ export default function TimelineGrid({
 
                 const charactersData = await getCharactersByIds(characterIds);
 
+                if (cancelled) return;
+
                 setProjects(projectsData);
                 setCharacters(charactersData);
                 setAppearances(appearancesData);
                 setCharacterEvents(characterEventsData);
+                setError(null);
             } catch (error) {
-                console.error(error);
+                if (cancelled) return;
 
+                console.error(error);
                 setError("Could not load timeline.")
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         }
 
-        loadTimeline();
-    }, [universeId]);
+        void loadTimeline();
+
+        return () => {
+            cancelled = true;
+        }
+    }, [universeId, loadAttempt]);
+
+    function retryTimeline() {
+        setError(null);
+        setLoading(true);
+        setLoadAttempt((current) => current + 1);
+    }
 
     async function handleCreateAppearance(
         characterId: number,
         projectId: number
     ) {
+        setActionError(null);
+
         try {
             const newAppearance = await createAppearance(
                 characterId,
@@ -88,6 +108,7 @@ export default function TimelineGrid({
             ]);
         } catch (error) {
             console.error(error);
+            setActionError("Could not add the appearance. Please try again.");
         }
     }
 
@@ -96,6 +117,8 @@ export default function TimelineGrid({
         projectId: number,
         updates: AppearanceUpdate
     ) {
+        setActionError(null);
+
         try {
             const updatedAppearance =
                 await updateAppearance(
@@ -114,6 +137,7 @@ export default function TimelineGrid({
             );
         } catch (error) {
             console.error(error);
+            setActionError("Could not update the appearance. Please try again.");
         }
     }
 
@@ -121,6 +145,8 @@ export default function TimelineGrid({
         characterId: number,
         projectId: number
     ) {
+        setActionError(null);
+
         try {
             await deleteAppearance(characterId, projectId);
 
@@ -133,7 +159,8 @@ export default function TimelineGrid({
                 )
             );
         } catch (error) {
-            console.error(error)
+            console.error(error);
+            setActionError("Could not remove the appearance. Please try again.");
         }
     }
 
@@ -143,6 +170,8 @@ export default function TimelineGrid({
         eventType: CharacterEventType,
         eventPosition: CharacterEventPosition
     ) {
+        setActionError(null);
+
         try {
             const savedEvent = await saveCharacterEvent(
                 characterId,
@@ -169,6 +198,7 @@ export default function TimelineGrid({
             })
         } catch (error) {
             console.log(error);
+            setActionError("Could not save the event. Please try again.");
         }
     }
 
@@ -176,6 +206,8 @@ export default function TimelineGrid({
         characterId: number,
         projectId: number
     ) {
+        setActionError(null);
+
         try {
             await deleteCharacterEvent(
                 characterId,
@@ -193,37 +225,84 @@ export default function TimelineGrid({
             );
         } catch (error) {
             console.log(error);
+            setActionError("Could not remove the event. Please try again.");
         }
     }
 
-    if (!universeId) {
-        return <p>Select a universe to load the timeline.</p>;
+    if (loading) {
+        return (
+            <p className="status-message" role="status">
+                Loading timeline...
+            </p>
+        );
     }
 
-    if (loading) return <p>Loading timeline...</p>
+    if (error) {
+        return (
+            <div className="status-message status-error" role="alert">
+                <p>{error}</p>
 
-    if (error) return <p>{error}</p>;
+                <button
+                    type="button"
+                    className="utility-button"
+                    onClick={retryTimeline}
+                >
+                    Try again
+                </button>
+            </div>
+        );
+    }
+
+    if (projects.length === 0) {
+        return (
+            <p className="status-message">
+                No projects have been added to this universe.
+            </p>
+        );
+    }
 
     return (
-        <section className="timeline-container">
-            <div className="timeline-grid">
-                <TimelineHeader projects={projects} />
+        <>
+            {actionError && (
+                <div className="status-message status-error" role="alert">
+                    <p>{actionError}</p>
 
-                {characters.map((character) => (
-                    <CharacterRow
-                        key={character.id}
-                        character={character}
-                        projects={projects}
-                        appearances={appearances}
-                        characterEvents={characterEvents} // TODO
-                        onCreateAppearance={handleCreateAppearance}
-                        onUpdateAppearance={handleUpdateAppearance}
-                        onDeleteAppearance={handleDeleteAppearance}
-                        onSaveCharacterEvent={handleSaveCharacterEvent} // TODO
-                        onDeleteCharacterEvent={handleDeleteCharacterEvent} // TODO
-                    />
-                ))}
-            </div>
-        </section>
+                    <button
+                        type="button"
+                        className="utility-button"
+                        onClick={() => setActionError(null)}
+                    >
+                        Dismiss
+                    </button>
+                </div>
+            )}
+
+            {characters.length === 0 && (
+                <p className="status-message">
+                    These projects do not have any character appearances or events yet.
+                </p>
+            )}
+
+            <section className="timeline-container" aria-label="Character timeline">
+                <div className="timeline-grid">
+                    <TimelineHeader projects={projects} />
+
+                    {characters.map((character) => (
+                        <CharacterRow
+                            key={character.id}
+                            character={character}
+                            projects={projects}
+                            appearances={appearances}
+                            characterEvents={characterEvents}
+                            onCreateAppearance={handleCreateAppearance}
+                            onUpdateAppearance={handleUpdateAppearance}
+                            onDeleteAppearance={handleDeleteAppearance}
+                            onSaveCharacterEvent={handleSaveCharacterEvent}
+                            onDeleteCharacterEvent={handleDeleteCharacterEvent}
+                        />
+                    ))}
+                </div>
+            </section>
+        </>
     )
 }
