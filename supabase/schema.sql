@@ -25,7 +25,7 @@ create table
     universe_projects (
         universe_id bigint not null references universes (id) on delete cascade,
         project_id bigint not null references projects (id) on delete cascade,
-        timeline_position integer not null check (position > 0),
+        timeline_position integer not null check (timeline_position > 0),
         primary key (universe_id, project_id),
         unique (universe_id, timeline_position)
     );
