@@ -1,11 +1,12 @@
+import Sidebar from './components/layout/Sidebar';
 import TimelinePage from './pages/TimelinePage';
 
 function App() {
   return (
-    <div>
+    <div className='app-layout'>
+      <Sidebar />
       <TimelinePage />
     </div>
-
   )
 }
 

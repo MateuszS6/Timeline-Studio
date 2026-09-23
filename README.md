@@ -13,7 +13,7 @@ Franchise and universe workspaces, and improved loading and error handling.
 
 > ![App](docs/images/timeline-studio-v0.2.0-workspaces.png)
 
-## The Aim
+## Aim
 
 To build a feature-packed application showing various film franchise timelines with up-to-date project and character viewers and statistics.
 

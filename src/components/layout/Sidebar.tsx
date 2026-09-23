@@ -1,6 +1,15 @@
-import { useWorkspace } from "../../context/WorkspaceContext"
+import { useWorkspace } from "../../context/WorkspaceContext";
+import type { WorkspaceView } from "../../types/workspace";
 
-export default function Sidebar() {
+interface SidebarProps {
+    activeView: WorkspaceView;
+    onViewChange: (view: WorkspaceView) => void;
+}
+
+export default function Sidebar({
+    activeView,
+    onViewChange
+}: SidebarProps) {
     const {
         franchises,
         universes,
@@ -69,26 +78,39 @@ export default function Sidebar() {
             <nav className="sidebar-nav" aria-label="Workspace">
                 <button
                     type="button"
-                    className="sidebar-item active"
-                    aria-current="page"
+                    className={
+                        activeView === "timeline"
+                            ? "sidebar-item active"
+                            : "sidebar-item"
+                    }
+                    aria-current={activeView === "timeline" ? "page" : undefined}
+                    onClick={() => onViewChange("timeline")}
                 >
                     Timeline
                 </button>
 
                 <button
                     type="button"
-                    className="sidebar-item"
-                    disabled
-                    title="Characters management is not available yet"
+                    className={
+                        activeView === "characters"
+                            ? "sidebar-item active"
+                            : "sidebar-item"
+                    }
+                    aria-current={activeView === "characters" ? "page" : undefined}
+                    onClick={() => onViewChange("characters")}
                 >
                     Characters
                 </button>
 
                 <button
                     type="button"
-                    className="sidebar-item"
-                    disabled
-                    title="Projects management is not available yet"
+                    className={
+                        activeView === "characters"
+                            ? "sidebar-item active"
+                            : "sidebar-item"
+                    }
+                    aria-current={activeView === "projects" ? "page" : undefined}
+                    onClick={() => onViewChange("projects")}
                 >
                     Projects
                 </button>
