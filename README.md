@@ -1,4 +1,4 @@
-# Timeline Studio: Marvel Timelines
+# Timeline Studio: Fictional-Media Timeline Viewer
 
 _A personal tool for exploring and editing fictional-media timelines,
 starting with the Marvel Cinematic Universe._
@@ -11,7 +11,7 @@ automatically calculated character lifelines.
 
 Franchise and universe workspaces, and improved loading and error handling.
 
-> ![App](docs/images/timeline-studio-0.2.0-workspaces.png)
+> ![App](docs/images/timeline-studio-v0.2.0-workspaces.png)
 
 ## The Aim
 
