@@ -7,11 +7,13 @@ Inspired by an Excel workflow, Timeline Studio places characters in rows
 and projects in chronological columns, with appearance markers and
 automatically calculated character lifelines.
 
-## Current version — `0.2.0`
+## Current version — `0.2.1`
 
-Franchise and universe workspaces, and improved loading and error handling.
+Added projects and characters pages and improved workspace structure.
 
-> ![App](docs/images/timeline-studio-v0.2.0-workspaces.png)
+> ![Timeline](docs/images/timeline-studio-v0.2.0-workspaces.png)
+
+> ![Projects](docs/images/timeline-studio-v0.2.1-projects-page.png)
 
 ## Aim
 

@@ -24,7 +24,7 @@ export default function ProjectsPage({
                 if (cancelled) return;
 
                 setProjects(data);
-            } catch {
+            } catch (error) {
                 if (cancelled) return;
 
                 console.error(error);
