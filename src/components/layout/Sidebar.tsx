@@ -105,7 +105,7 @@ export default function Sidebar({
                 <button
                     type="button"
                     className={
-                        activeView === "characters"
+                        activeView === "projects"
                             ? "sidebar-item active"
                             : "sidebar-item"
                     }

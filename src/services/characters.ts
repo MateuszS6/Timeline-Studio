@@ -18,3 +18,17 @@ export async function getCharactersByIds(
 
     return data ?? [];
 }
+
+export async function getCharactersByOriginUniverse(
+    universeId: number
+): Promise<Character[]> {
+    const { data, error } = await supabase
+        .from("characters")
+        .select("*")
+        .eq("origin_universe_id", universeId)
+        .order("alias");
+
+    if (error) throw error;
+
+    return data ?? [];
+}
