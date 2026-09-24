@@ -33,7 +33,8 @@ create table
 create table
     characters (
         id bigint generated always as identity primary key,
-        alias text not null unique,
+        alias text not null,
+        real_name text,
         origin_universe_id bigint references universes (id) on delete set null
     );
 

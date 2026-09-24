@@ -1,5 +1,5 @@
 import { supabase } from "../config/supabase";
-import type { Character } from "../types/character";
+import type { Character, CharacterInput } from "../types/character";
 
 export async function getCharactersByIds(
     characterIds: number[]
@@ -31,4 +31,34 @@ export async function getCharactersByOriginUniverse(
     if (error) throw error;
 
     return data ?? [];
+}
+
+export async function createCharacter(
+    input: CharacterInput
+): Promise<Character> {
+    const { data, error } = await supabase
+        .from("characters")
+        .insert(input)
+        .select()
+        .single();
+
+    if (error) throw error;
+
+    return data;
+}
+
+export async function updateCharacter(
+    id: number,
+    input: CharacterInput
+): Promise<Character> {
+    const { data, error } = await supabase
+        .from("characters")
+        .update(input)
+        .eq("id", id)
+        .select()
+        .single();
+
+    if (error) throw error;
+
+    return data;
 }
