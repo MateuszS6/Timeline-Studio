@@ -1,7 +1,7 @@
 /* --- SIDEBAR --- */
 
 .sidebar {
-    width: 240px;
+    width: 250px;
     flex-shrink: 0;
 
     padding: 24px 16px;
