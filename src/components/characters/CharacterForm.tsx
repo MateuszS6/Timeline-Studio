@@ -57,7 +57,7 @@ export default function CharacterForm({
             });
         } catch (caughtError) {
             console.error(caughtError);
-            setError("Could not save the character. Your entried have been kept.");
+            setError("Could not save the character. Your entries have been kept.");
         } finally {
             savingRef.current = false;
             setSaving(false);
@@ -82,7 +82,9 @@ export default function CharacterForm({
             )}
 
             <fieldset disabled={saving}>
+
                 <div className="form-fields">
+
                     <label className="form-field">
                         <span>Alias</span>
                         <input
@@ -93,39 +95,42 @@ export default function CharacterForm({
                             autoFocus
                         />
                         <small>The display name used in the timeline.</small>
-
-                        <label className="form-field">
-                            <span>Real name (optional)</span>
-                            <input
-                                type="text"
-                                value={realName}
-                                onChange={(event) => setRealName(event.target.value)}
-                            />
-                        </label>
-
-                        <label className="form-field">
-                            <span>Origin universe</span>
-                            <select
-                                value={originUniverseId}
-                                onChange={(event) =>
-                                    setOriginUniverseId(Number(event.target.value))
-                                }
-                                required
-                            >
-                                {universes.map((universe) => (
-                                    <option key={universe.id} value={universe.id}>
-                                        {universe.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <small>
-                                Origin does not restrict where this character can appear.
-                            </small>
-                        </label>
                     </label>
+
+                    <label className="form-field">
+                        <span>Real name (optional)</span>
+                        <input
+                            type="text"
+                            value={realName}
+                            onChange={(event) => setRealName(event.target.value)}
+                        />
+                    </label>
+
+                    <label className="form-field">
+                        <span>Origin universe</span>
+                        <select
+                            value={originUniverseId}
+                            onChange={(event) =>
+                                setOriginUniverseId(Number(event.target.value))
+                            }
+                            required
+                        >
+                            {universes.map((universe) => (
+                                <option key={universe.id} value={universe.id}>
+                                    {universe.name}
+                                </option>
+                            ))}
+                        </select>
+                        <small>
+                            Origin does not restrict where this character can appear.
+                        </small>
+
+                    </label>
+
                 </div>
 
                 <div className="form-actions">
+
                     <button type="submit" className="utility-button">
                         {saving
                             ? "Saving..."
@@ -141,7 +146,9 @@ export default function CharacterForm({
                     >
                         Cancel
                     </button>
+
                 </div>
+                
             </fieldset>
         </form>
     );

@@ -38,7 +38,7 @@ export default function CharactersPage({
 
                 if (cancelled) return;
 
-                setCharacters(data);
+                setCharacters(sortCharacters(data));
             } catch (caughtError) {
                 if (cancelled) return;
 
@@ -145,7 +145,7 @@ export default function CharactersPage({
                 </button>
             </div>
 
-            {editor && (
+            {notice && (
                 <p className="management-notice" role="status">
                     {notice}
                 </p>
