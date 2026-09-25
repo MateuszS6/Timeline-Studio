@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Character, CharacterInput } from "../types/character";
 import { createCharacter, getCharactersByOriginUniverse, updateCharacter } from "../services/characters";
 import { useWorkspace } from "../context/WorkspaceContext";
 import CharacterForm from "../components/characters/CharacterForm";
+import { getTimelineCharactersIds, hideCharacterFromTimeline, showCharacterOnTimeline } from "../services/timelineCharacters";
 
 interface CharactersPageProps {
     universeId: number;
@@ -29,21 +30,35 @@ export default function CharactersPage({
     const [editor, setEditor] = useState<Character | "new" | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
 
+    const [timelineCharacterIds, setTimelineCharacterIds] = useState<number[]>([]);
+    const [changingCharacterId, setChangingCharacterId] = useState<number | null>(null);
+    const [actionError, setActionError] = useState<string | null>(null);
+
+    const changingRef = useRef(false);
+    const controlsDisabled = editor !== null || changingCharacterId !== null;
+
     useEffect(() => {
         let cancelled = false;
 
         async function loadCharacters() {
             try {
-                const data = await getCharactersByOriginUniverse(universeId);
+                const [data, selectedIds] = await Promise.all([
+                    getCharactersByOriginUniverse(universeId),
+                    getTimelineCharactersIds(universeId)
+                ]);
 
                 if (cancelled) return;
 
                 setCharacters(sortCharacters(data));
+                setTimelineCharacterIds(selectedIds);
+
             } catch (caughtError) {
+
                 if (cancelled) return;
 
                 console.error(caughtError);
                 setError("Could not load characters.")
+
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -65,6 +80,51 @@ export default function CharactersPage({
     function openEditor(value: Character | "new") {
         setNotice(null);
         setEditor(value);
+    }
+
+    async function handleTimelineToggle(character: Character) {
+        if (changingRef.current) return;
+
+        const isShown = timelineCharacterIds.includes(character.id);
+
+        changingRef.current = true;
+        setChangingCharacterId(character.id);
+        setActionError(null);
+        setNotice(null);
+
+        try {
+            if (isShown) {
+                await hideCharacterFromTimeline(universeId, character.id);
+
+                setTimelineCharacterIds((current: number[]) =>
+                    current.filter((id) => id !== character.id)
+                );
+
+                setNotice(
+                    `${character.alias} hidden from this timeline. ` +
+                    "Their appearances and events are still saved."
+                );
+            } else {
+                await showCharacterOnTimeline(universeId, character.id);
+
+                setTimelineCharacterIds((current: number[]) =>
+                    current.includes(character.id)
+                        ? current
+                        : [...current, character.id]
+                );
+
+                setNotice(
+                    `${character.alias} shown on this timeline. ` +
+                    "Open Timeline to edit their appearances and events."
+                );
+            }
+        } catch (caughtError) {
+            console.error(caughtError);
+            setActionError("Could not change timeline visibility. Please try again.")
+        } finally {
+            changingRef.current = false;
+            setChangingCharacterId(null);
+        }
     }
 
     async function handleSave(input: CharacterInput): Promise<void> {
@@ -138,7 +198,7 @@ export default function CharactersPage({
                 <button
                     type="button"
                     className="utility-button"
-                    disabled={editor !== null}
+                    disabled={controlsDisabled}
                     onClick={() => openEditor("new")}
                 >
                     Add character
@@ -148,6 +208,12 @@ export default function CharactersPage({
             {notice && (
                 <p className="management-notice" role="status">
                     {notice}
+                </p>
+            )}
+
+            {actionError && (
+                <p className="form-error" role="alert">
+                    {actionError}
                 </p>
             )}
 
@@ -173,28 +239,51 @@ export default function CharactersPage({
                             <tr>
                                 <th scope="col">Character</th>
                                 <th scope="col">Real name</th>
+                                <th scope="col">Timeline</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {characters.map((character) => (
-                                <tr key={character.id}>
-                                    <td>{character.alias}</td>
-                                    <td>{character.real_name ?? "?"}</td>
-                                    <td>
-                                        <button
-                                            type="button"
-                                            className="utility-button"
-                                            disabled={editor !== null}
-                                            aria-label={`Edit ${character.alias}`}
-                                            onClick={() => openEditor(character)}
-                                        >
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {characters.map((character) => {
+                                const isShown = timelineCharacterIds.includes(character.id);
+                                const isChanging = changingCharacterId === character.id;
+
+                                return (
+                                    <tr key={character.id}>
+                                        <td>{character.alias}</td>
+                                        <td>{character.real_name ?? "?"}</td>
+                                        <td>{isShown ? "Shown" : "Hidden"}</td>
+
+                                        <td>
+                                            <div className="management-row-actions">
+                                                <button
+                                                    type="button"
+                                                    className="utility-button"
+                                                    disabled={editor !== null}
+                                                    aria-label={`Edit ${character.alias}`}
+                                                    onClick={() => openEditor(character)}
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="utility-button"
+                                                    disabled={controlsDisabled}
+                                                    onClick={() => handleTimelineToggle(character)}
+                                                >
+                                                    {isChanging
+                                                        ? "Saving..."
+                                                        : isShown
+                                                            ? "Hide from timeline"
+                                                            : "Show on timeline"}
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

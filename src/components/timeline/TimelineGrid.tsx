@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { createAppearance, deleteAppearance, getAppearancesForProjects, updateAppearance } from "../../services/appearances";
 import { deleteCharacterEvent, getCharacterEventsForProjects, saveCharacterEvent } from "../../services/characterEvents";
-import { getCharactersByIds } from "../../services/characters";
 import { getProjectsForUniverse } from "../../services/projects";
 import type { Appearance, AppearanceUpdate } from "../../types/appearance";
 import type { Character } from "../../types/character";
@@ -9,6 +8,7 @@ import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from 
 import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
 import TimelineHeader from "./TimelineHeader";
+import { getTimelineCharacters } from "../../services/timelineCharacters";
 
 interface TimelineGridProps {
     universeId: number;
@@ -40,25 +40,15 @@ export default function TimelineGrid({
 
                 const projectIds = projectsData.map((project) => project.id);
 
-                const [appearancesData, characterEventsData] = await Promise.all([
+                const [
+                    appearancesData,
+                    characterEventsData,
+                    charactersData
+                ] = await Promise.all([
                     getAppearancesForProjects(projectIds),
-                    getCharacterEventsForProjects(projectIds)
+                    getCharacterEventsForProjects(projectIds),
+                    getTimelineCharacters(universeId)
                 ]);
-
-                if (cancelled) return;
-
-                const characterIds = Array.from(
-                    new Set([
-                        ...appearancesData.map(
-                            (appearance) => appearance.character_id
-                        ),
-                        ...characterEventsData.map(
-                            (event) => event.character_id
-                        )
-                    ])
-                );
-
-                const charactersData = await getCharactersByIds(characterIds);
 
                 if (cancelled) return;
 
@@ -279,7 +269,8 @@ export default function TimelineGrid({
 
             {characters.length === 0 && (
                 <p className="status-message">
-                    These projects do not have any character appearances or events yet.
+                    No characters are shown on this timeline.
+                    Open Characters and choose "Show on timeline".
                 </p>
             )}
 

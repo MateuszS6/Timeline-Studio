@@ -48,6 +48,13 @@ create table
     );
 
 create table
+    universe_characters (
+        universe_id bigint not null references universes (id) on delete cascade,
+        character_id bigint not null references characters (id) on delete cascade,
+        primary key (universe_id, character_id)
+    );
+
+create table
     character_events (
         id bigint generated always as identity primary key,
         character_id bigint not null references characters (id) on delete cascade,
