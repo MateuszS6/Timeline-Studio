@@ -1,5 +1,5 @@
 import { supabase } from '../config/supabase'
-import type { Project } from '../types/project';
+import type { Project, ProjectInput } from '../types/project';
 
 interface UniverseProjectLink {
     project_id: number;
@@ -9,7 +9,7 @@ interface UniverseProjectLink {
 export async function getProjectsForUniverse(
     universeId: number
 ): Promise<Project[]> {
-    
+
     const { data: links, error: linksError } = await supabase
         .from("universe_projects")
         .select("project_id, timeline_position")
@@ -46,4 +46,38 @@ export async function getProjectsForUniverse(
 
         return project ? [project] : [];
     })
+}
+
+export async function saveProjectInUniverse(
+    universeId: number,
+    projectId: number | null,
+    input: ProjectInput,
+    position: number
+): Promise<Project[]> {
+    const { data, error } = await supabase.rpc(
+        "save_project_in_universe",
+        {
+            p_universe_id: universeId,
+            p_project_id: projectId,
+            p_title: input.title,
+            p_release_date: input.release_date,
+            p_primary_universe_id: input.primary_universe_id,
+            p_position: position
+        }
+    );
+
+    if (error) throw error;
+
+    return data ?? [];
+}
+
+export async function deleteProject(id: number): Promise<void> {
+    const { error } = await supabase
+        .from("projects")
+        .delete()
+        .eq("id", id)
+        .select("id")
+        .single();
+
+    if (error) throw error;
 }
