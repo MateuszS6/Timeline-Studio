@@ -62,3 +62,14 @@ export async function updateCharacter(
 
     return data;
 }
+
+export async function deleteCharacter(id: number): Promise<void> {
+    const { error } = await supabase
+        .from("characters")
+        .delete()
+        .eq("id", id)
+        .select("id")
+        .single();
+
+    if (error) throw error;
+}

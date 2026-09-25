@@ -153,6 +153,10 @@
     color: var(--color-danger);
 }
 
+.utility-button-danger {
+    color: var(--color-danger);
+}
+
 .utility-button:disabled {
     opacity: 0.55;
     cursor: default;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Character, CharacterInput } from "../types/character";
-import { createCharacter, getCharactersByOriginUniverse, updateCharacter } from "../services/characters";
+import { createCharacter, deleteCharacter, getCharactersByOriginUniverse, updateCharacter } from "../services/characters";
 import { useWorkspace } from "../context/WorkspaceContext";
 import CharacterForm from "../components/characters/CharacterForm";
 import { getTimelineCharactersIds, hideCharacterFromTimeline, showCharacterOnTimeline } from "../services/timelineCharacters";
@@ -163,6 +163,44 @@ export default function CharactersPage({
         setEditor(null);
     }
 
+    async function handleDeleteCharacter(character: Character) {
+        if (changingRef.current || editor !== null) return;
+
+        const confirmed = window.confirm(
+            `Permanently delete "${character.alias}"?\n\n` +
+            "This also deletes all their appearances, events, and timeline " +
+            "selections across every universe. \n\n" +
+            "This cannot be undone."
+        )
+
+        if (!confirmed) return;
+
+        changingRef.current = true;
+        setChangingCharacterId(character.id);
+        setActionError(null);
+        setNotice(null);
+
+        try {
+            await deleteCharacter(character.id);
+
+            setCharacters((current) =>
+                current.filter((item) => item.id !== character.id)
+            );
+
+            setTimelineCharacterIds((current) =>
+                current.filter((id) => id !== character.id)
+            );
+
+            setNotice(`${character.alias} deleted.`)
+        } catch (caughtError) {
+            console.error(caughtError);
+            setActionError("Could not delete the character. Please try again.");
+        } finally {
+            changingRef.current = false;
+            setChangingCharacterId(null);
+        }
+    }
+
     if (loading) {
         return (
             <p className="status-message" role="status">
@@ -278,6 +316,16 @@ export default function CharactersPage({
                                                         : isShown
                                                             ? "Hide from timeline"
                                                             : "Show on timeline"}
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="utility-button utility-button-danger"
+                                                    disabled={controlsDisabled}
+                                                    aria-label={`Delete ${character.alias}`}
+                                                    onClick={() => handleDeleteCharacter(character)}
+                                                >
+                                                    Delete
                                                 </button>
                                             </div>
                                         </td>

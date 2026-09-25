@@ -57,6 +57,8 @@
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-sm);
 
+    white-space: nowrap;
+
     background: var(--surface-overlay);
     color: var(--color-primary);
 
