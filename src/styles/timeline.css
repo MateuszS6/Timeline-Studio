@@ -40,6 +40,8 @@
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 
     width: 190px;
     min-width: 190px;
@@ -53,12 +55,41 @@
     font-weight: 500;
 }
 
+.character-column > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .timeline-corner {
     z-index: 7;
 
     color: var(--color-secondary);
 
     font-size: 13px;
+}
+
+.timeline-hide-button {
+    flex-shrink: 0;
+    padding: 4px 6px;
+
+    border: 0;
+    border-radius: var(--radius-sm);
+
+    background: transparent;
+    color: var(--color-secondary);
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+.timeline-hide-button:hover {
+    background: var(--button-bg-active);
+    color: var(--color-primary);
+}
+
+.timeline-hide-button:disabled {
+    opacity: 0.5;
+    cursor: default;
 }
 
 /* PROJECT HEADER */

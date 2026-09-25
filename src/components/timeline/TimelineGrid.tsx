@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createAppearance, deleteAppearance, getAppearancesForProjects, updateAppearance } from "../../services/appearances";
 import { deleteCharacterEvent, getCharacterEventsForProjects, saveCharacterEvent } from "../../services/characterEvents";
 import { getProjectsForUniverse } from "../../services/projects";
@@ -8,7 +8,7 @@ import type { CharacterEvent, CharacterEventPosition, CharacterEventType } from 
 import type { Project } from "../../types/project";
 import CharacterRow from "./CharacterRow";
 import TimelineHeader from "./TimelineHeader";
-import { getTimelineCharacters } from "../../services/timelineCharacters";
+import { getTimelineCharacters, hideCharacterFromTimeline, showCharacterOnTimeline } from "../../services/timelineCharacters";
 
 interface TimelineGridProps {
     universeId: number;
@@ -28,6 +28,10 @@ export default function TimelineGrid({
 
     const [loadAttempt, setLoadAttempt] = useState(0);
     const [actionError, setActionError] = useState<string | null>(null);
+
+    const [hidingCharacterId, setHidingCharacterId] = useState<number | null>(null);
+    const hidingRef = useRef(false);
+    const [hiddenCharacter, setHiddenCharacter] = useState<Character | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -79,6 +83,8 @@ export default function TimelineGrid({
         setLoading(true);
         setLoadAttempt((current) => current + 1);
     }
+
+    // Appearance handlers
 
     async function handleCreateAppearance(
         characterId: number,
@@ -154,6 +160,8 @@ export default function TimelineGrid({
         }
     }
 
+    // Event handlers
+
     async function handleSaveCharacterEvent(
         characterId: number,
         projectId: number,
@@ -219,6 +227,65 @@ export default function TimelineGrid({
         }
     }
 
+    // Character handler
+
+    async function handleHideCharacter(characterId: number) {
+        if (hidingRef.current) return;
+
+        const character = characters.find((item) => item.id === characterId);
+        if (!character) return;
+
+        hidingRef.current = true;
+        setHidingCharacterId(characterId);
+        setActionError(null);
+
+        try {
+            await hideCharacterFromTimeline(universeId, characterId);
+
+            setCharacters((current) =>
+                current.filter((item) => item.id !== characterId)
+            );
+
+            setHiddenCharacter(character);
+        } catch (caughtError) {
+            console.error(caughtError);
+            setActionError("Could not hide the character. Please try again.")
+        } finally {
+            hidingRef.current = false;
+            setHidingCharacterId(null);
+        }
+    }
+
+    async function handleUndoHide() {
+        if (!hiddenCharacter || hidingRef.current) return;
+
+        const character = hiddenCharacter;
+
+        hidingRef.current = true;
+        setHidingCharacterId(character.id);
+        setActionError(null);
+
+        try {
+            await showCharacterOnTimeline(universeId, character.id);
+
+            setCharacters((current) =>
+                [...current.filter((item) => item.id !== character.id), character]
+                    .sort((first, second) =>
+                        first.alias.localeCompare(second.alias) ||
+                        first.id - second.id
+                    )
+            );
+
+            setHiddenCharacter(null);
+        } catch (caughtError) {
+            console.error(caughtError);
+            setActionError("Could not restore the character. Please try again.")
+        } finally {
+            hidingRef.current = false;
+            setHidingCharacterId(null);
+        }
+    }
+
     if (loading) {
         return (
             <p className="status-message" role="status">
@@ -253,6 +320,23 @@ export default function TimelineGrid({
 
     return (
         <>
+            {hiddenCharacter && (
+                <div className="management-toolbar">
+                    <p className="management-notice" role="status">
+                        {hiddenCharacter.alias} hidden. Their appearances and events are saved.
+                    </p>
+
+                    <button
+                        type="button"
+                        className="utility-button"
+                        disabled={hidingCharacterId !== null}
+                        onClick={handleUndoHide}
+                    >
+                        Undo
+                    </button>
+                </div>
+            )}
+
             {actionError && (
                 <div className="status-message status-error" role="alert">
                     <p>{actionError}</p>
@@ -290,6 +374,8 @@ export default function TimelineGrid({
                             onDeleteAppearance={handleDeleteAppearance}
                             onSaveCharacterEvent={handleSaveCharacterEvent}
                             onDeleteCharacterEvent={handleDeleteCharacterEvent}
+                            onHideCharacter={handleHideCharacter}
+                            hideDisabled={hidingCharacterId !== null}
                         />
                     ))}
                 </div>

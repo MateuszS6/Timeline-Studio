@@ -260,7 +260,7 @@ export default function CharactersPage({
                                                 <button
                                                     type="button"
                                                     className="utility-button"
-                                                    disabled={editor !== null}
+                                                    disabled={controlsDisabled}
                                                     aria-label={`Edit ${character.alias}`}
                                                     onClick={() => openEditor(character)}
                                                 >

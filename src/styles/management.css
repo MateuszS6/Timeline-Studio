@@ -70,6 +70,12 @@
     background: var(--timeline-hover);
 }
 
+.management-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .management-notice {
     flex-shrink: 0;
     margin: 0;

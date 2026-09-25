@@ -39,6 +39,9 @@ interface CharacterRowProps {
         characterId: number,
         projectId: number
     ) => void;
+
+    onHideCharacter: (characterId: number) => void;
+    hideDisabled: boolean;
 }
 
 export default function CharacterRow({
@@ -50,7 +53,9 @@ export default function CharacterRow({
     onUpdateAppearance,
     onDeleteAppearance,
     onSaveCharacterEvent,
-    onDeleteCharacterEvent
+    onDeleteCharacterEvent,
+    onHideCharacter,
+    hideDisabled
 }: CharacterRowProps) {
     const rowAppearances = projects.map((project) =>
         appearances.find(
@@ -84,7 +89,18 @@ export default function CharacterRow({
     return (
         <div className="timeline-row">
             <div className="character-column">
-                {character.alias}
+                <span>{character.alias}</span>
+
+                <button
+                    type="button"
+                    className="timeline-hide-button"
+                    disabled={hideDisabled}
+                    aria-label={`Hide ${character.alias} from this timeline`}
+                    title="Hide this row. Appearances and events stay saved."
+                    onClick={() => onHideCharacter(character.id)}
+                >
+                    Hide
+                </button>
             </div>
 
             {projects.map((project, index) => {
